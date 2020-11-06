@@ -1,0 +1,77 @@
+<!doctype html>
+<html class="">
+<head>
+    <title>achievement getter</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <script type="text/javascript">
+        const steam_id = '76561197976979061'
+        const game_id = '220';
+    </script>
+    <style type="text/css">
+        .list {
+            color: #FFF;
+            font-size: 20px;
+            font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+            text-shadow: 0 0 1px rgba(0, 0, 0, .95);
+            -webkit-text-stroke-width: 1px;
+            -webkit-text-stroke-color: black;
+        }
+		
+		.list span{
+            color: #7CFC00;
+        }
+		
+		html, body { 
+		    width: 1500px;
+			background: none transparent;
+			overflow: hidden; 
+		}
+		
+		* {
+			margin: 0;
+			padding: 0;
+			line-height: 1;
+		}
+    </style>
+</head>
+<body>
+<p class="list" id="achievement"></p>
+<script type="text/javascript">
+    function start(textElement, steam_id, game_id) {
+        setInterval(function () {
+			url = 'http://localhost:4000/steam/' + steam_id + '/' + game_id + '/achievements'
+			fetch(url, {
+				method: 'GET', 
+				cache: 'no-cache',
+				headers: {
+				  'Content-Type': 'application/json'
+				},
+			})
+			.then(function(response) { return response.json(); })
+			.then(function(json) {
+				textElement.innerHTML = ''
+				for(var key in json['playerstats']['achievements']) {
+					
+					achievement_name = json['playerstats']['achievements'][key]['apiname']
+					
+					if(json['playerstats']['achievements'][key]['achieved'] == 1) {
+						achievement_name = '<span>' + achievement_name + '</span>'
+						textElement.innerHTML = textElement.innerHTML  + achievement_name + '</br>';
+					}
+					else {
+						textElement.innerHTML = textElement.innerHTML  + achievement_name + '</br>';
+					}
+				}
+			});
+        }, 2000);
+    }
+
+    window.onload = function () {
+        var textElement = document.querySelector('#achievement');
+        textElement.innerHTML = ''
+        start(textElement, steam_id, game_id);
+    };
+</script>
+</body>
+</html>
